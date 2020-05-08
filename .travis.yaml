@@ -5,6 +5,6 @@ script: python manage.py test
 deploy:
   provider: heroku
   api_key: $HEROKU_API_KEY
-  app: gisWebApp
+  app: giswebapp
   run: python manage.py migrate
   on: master
