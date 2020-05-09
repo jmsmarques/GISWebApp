@@ -31,7 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'gisMap.apps.gisMapConfig',
+    'gisMap.apps.GismapConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -77,10 +77,10 @@ WSGI_APPLICATION = 'gisWebApp.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'USER': os.environ.DATABASE_USER,
-        'PASSWORD': os.environ.DATABASE_PASSWORD,
-        'HOST': os.environ.DATABASE_HOST,
-        'PORT': os.environ.DATABASE_PORT,
+        'USER': os.environ['DATABASE_USER'],
+        'PASSWORD': os.environ['DATABASE_PASSWORD'],
+        'HOST': os.environ['DATABASE_HOST'],
+        'PORT': os.environ['DATABASE_PORT'],
     }
 }
 
