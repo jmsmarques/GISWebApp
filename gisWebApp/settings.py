@@ -25,7 +25,7 @@ SECRET_KEY = 'du77velyn=g0lrw@twxysk^p71(6jb+ysh-g!p2%807rlq6+q!'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['giswebapp.herokuapp.com']
 
 
 # Application definition
