@@ -31,6 +31,7 @@ ALLOWED_HOSTS = ['giswebapp.herokuapp.com', '127.0.0.1']
 # Application definition
 
 INSTALLED_APPS = [
+    'leaflet',
     'gisMap.apps.GismapConfig',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -129,3 +130,11 @@ STATICFILES_DIR = [
     os.path.join(BASE_DIR, 'static'),
 ]
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+#Leaftlet configurations
+LEAFLET_CONFIG = {
+    'DEFAULT_CENTER': (38.707616,-9.1365), #Lisbon coordinates
+    'DEFAULT_ZOOM': 16,
+    'MIN_ZOOM': 3,
+    'MAX_ZOOM': 18,
+}

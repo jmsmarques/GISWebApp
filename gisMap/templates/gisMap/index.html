@@ -1,0 +1,17 @@
+{% extends "gisMap/base.html" %}
+{% load leaflet_tags %}
+{% load static %}
+
+{% block little_script %}
+    {% leaflet_js %}
+    {% leaflet_css %}
+    <script src="{% static 'gisMap/js/index.js'%}"></script>
+{% endblock %}
+
+{% block body %}
+    <h1>Welcome</h1>
+
+    {% leaflet_map "my_map" %}
+
+    <a class="btn btn-primary" href="{% url 'logout' %}">Logout</a>
+{% endblock %}
