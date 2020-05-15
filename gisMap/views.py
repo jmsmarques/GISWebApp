@@ -3,7 +3,9 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
+from django.contrib.gis.geos import Point
 from django.contrib.auth.models import User
+from .models import Freguesia, Image, Concelho
 
 def index(request):
     if not request.user.is_authenticated:
@@ -38,4 +40,21 @@ def register_view(request):
     login(request, user) #login the newly registered user
     return render(request, "gisMap/index.html")
 
+
+def add_image(request):
+    if not request.user.is_authenticated: #verify that the user is logged in
+        return render(request, "gisMap/login.html")
+    
+    description = request.POST["description"]
+    image = request.POST.get("image", None)
+    lat = float(request.POST["lat"])
+    lon = float(request.POST["lon"])
+    location = Point(lon, lat)
+
+    #intersect the location with the freguesias to find in which one it is located
+    freguesia = Freguesia.objects.get(geom__contains=location)
+
+    new_image = Image(description=description, image=image, location=location, freguesia=freguesia)
+    new_image.save()
+    return render(request, "gisMap/index.html")
 

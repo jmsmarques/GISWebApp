@@ -16,37 +16,33 @@ freguesia_mapping = {
 
 # Auto-generated `LayerMapping` dictionary for Concelho model
 concelho_mapping = {
-    'dicofre': 'Dicofre',
     'concelho': 'Concelho',
     'distrito': {'distrito': 'Distrito'},
     'taa': 'TAA',
     'area_ea_ha': 'AREA_EA_Ha',
     'area_t_ha': 'AREA_T_Ha',
-    'des_simpli': 'Des_Simpli',
     'geom': 'MULTIPOLYGON',
 }
 
 # Auto-generated `LayerMapping` dictionary for Distritos model
 distrito_mapping = {
-    'dicofre': 'Dicofre',
     'distrito': 'Distrito',
     'taa': 'TAA',
     'area_ea_ha': 'AREA_EA_Ha',
     'area_t_ha': 'AREA_T_Ha',
-    'des_simpli': 'Des_Simpli',
     'geom': 'MULTIPOLYGON',
 }
 
 district_shp = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), 'data', 'Distritos/Distritos.shp'),
+    os.path.join(os.path.dirname(__file__), 'data', 'Distritos/Distritos_WGS84.shp'),
 )
 
 concelho_shp = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), 'data', 'Concelhos/Concelhos.shp'),
+    os.path.join(os.path.dirname(__file__), 'data', 'Concelhos/Concelhos_WGS84.shp'),
 )
 
 freguesia_shp = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), 'data', 'Freguesias/Cont_AAD_CAOP2019.shp'),
+    os.path.join(os.path.dirname(__file__), 'data', 'Freguesias/Freguesias_WGS84.shp'),
 )
 
 def run(verbose=True):

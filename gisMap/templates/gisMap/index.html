@@ -5,7 +5,72 @@
 {% block little_script %}
     {% leaflet_js %}
     {% leaflet_css %}
-    <script src="{% static 'gisMap/js/index.js'%}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            var current_marker = null, lat, lon;
+
+            var markerPopup = L.popup()
+                                .setContent(` 
+                                <form action=\"{% url 'add_image' %}\" method="POST">
+                                {% csrf_token %}
+                                    <table border = "1">
+                                        <tr>
+                                            <label for="lat">Lat:</label>
+                                            <input type="text" id="i-lat" name="lat">
+                                        </tr>
+                                        <tr>
+                                            <label for="lon">Lon:</label>
+                                            <input type="text" id="i-lon" name="lon">
+                                        </tr>
+                                        <tr>
+                                            <label for="description">Description:</label>
+                                            <input type="text" id="i-description" name="description">
+                                        </tr>
+                                        <tr>
+                                            <label for="image">Image:</label>
+                                            <input type="file" id="i-image" name="image accept="image/*>
+                                        </tr>
+                                    </table>
+                                    <input type="submit" value="Save" />
+                                </form>
+                                `);
+
+            window.addEventListener("map:init", e => {
+                const map = e.detail.map;
+                
+                map.addEventListener("click", e => {
+                    if(current_marker !== null) //check if marker already exists and remove it if it does
+                        current_marker.remove();
+
+                    current_marker = L.marker(e.latlng).addTo(map);
+                    lat = e.latlng.lat;
+                    lon = e.latlng.lng;
+
+                    current_marker.bindPopup(markerPopup)
+
+                    //on popup open fill the lat and lon fields and set to readonly
+                    current_marker.addEventListener('popupopen', () => {
+                        fillMarkerLatLon(lat, lon);
+                    });
+
+                    current_marker.addEventListener('dblclick', () => {
+                        current_marker.remove();
+                    })
+                });
+
+            }, false);
+
+            
+
+            function fillMarkerLatLon(lat, lon) {
+                document.querySelector('#i-lat').value = lat;
+                document.querySelector('#i-lon').value= lon;
+                document.querySelector('#i-lat').readOnly = true;
+                document.querySelector('#i-lon').readOnly = true;
+            }
+        });
+    </script>
 {% endblock %}
 
 {% block body %}
