@@ -58,10 +58,13 @@
                         current_marker.remove();
                     })
                 });
+                
+                //add the images in the database to the map
+                {% for image in images%}
+                    L.marker(["{{ image.location.y }}", "{{ image.location.x }}"]).addTo(map);
+                {% endfor %}
 
             }, false);
-
-            
 
             function fillMarkerLatLon(lat, lon) {
                 document.querySelector('#i-lat').value = lat;

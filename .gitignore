@@ -131,3 +131,6 @@ dmypy.json
 #Django
 migrations/
 data/
+
+#environmental variables
+*.cmd

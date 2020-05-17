@@ -10,7 +10,11 @@ from .models import Freguesia, Image, Concelho
 def index(request):
     if not request.user.is_authenticated:
         return render(request, "gisMap/login.html")
-    return render(request, "gisMap/index.html")
+    #set context to include all the images in the database
+    context = {
+        "images": Image.objects.all()
+    }
+    return render(request, "gisMap/index.html", context)
 
 @require_http_methods(["POST"])
 def login_view(request):
@@ -45,16 +49,28 @@ def add_image(request):
     if not request.user.is_authenticated: #verify that the user is logged in
         return render(request, "gisMap/login.html")
     
-    description = request.POST["description"]
-    image = request.POST.get("image", None)
-    lat = float(request.POST["lat"])
-    lon = float(request.POST["lon"])
-    location = Point(lon, lat)
+    message = None  #Message to send to user in case of failure
+    try:
+        description = request.POST["description"]
+        image = request.POST.get("image", None)
+        lat = float(request.POST["lat"])
+        lon = float(request.POST["lon"])
+        location = Point(lon, lat)
 
-    #intersect the location with the freguesias to find in which one it is located
-    freguesia = Freguesia.objects.get(geom__contains=location)
+        #intersect the location with the freguesias to find in which one it is located
+        freguesia = Freguesia.objects.get(geom__contains=location)
 
-    new_image = Image(description=description, image=image, location=location, freguesia=freguesia)
-    new_image.save()
-    return render(request, "gisMap/index.html")
+        new_image = Image(description=description, image=image, location=location, freguesia=freguesia)
+        new_image.save()
+    except Exception as e:
+        print("Point addition failed")
+        message = "Addition failed"
+        
+    #set context to include all the images in the database
+    context = {
+        "images": Image.objects.all(),
+        "message": message
+    }
+
+    return render(request, "gisMap/index.html", context)
 
