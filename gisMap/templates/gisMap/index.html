@@ -8,6 +8,7 @@
     <link rel="stylesheet" type="text/css" href="{% static 'gisMap/LeafletClustering/MarkerCluster.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'gisMap/LeafletClustering/MarkerCluster.Default.css' %}">
     <script src="{% static 'gisMap/LeafletClustering/leaflet.markercluster.js' %}"></script>
+    <script src="{% static 'gisMap/js/index.js' %}"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
 
@@ -17,31 +18,29 @@
                                 .setContent(` 
                                 <form action=\"{% url 'add_image' %}\" method="POST">
                                 {% csrf_token %}
-                                    <table border = "1">
-                                        <tr>
-                                            <label for="lat">Lat:</label>
-                                            <input type="text" id="i-lat" name="lat">
-                                        </tr>
-                                        <tr>
-                                            <label for="lon">Lon:</label>
-                                            <input type="text" id="i-lon" name="lon">
-                                        </tr>
-                                        <tr>
-                                            <label for="description">Description:</label>
-                                            <input type="text" id="i-description" name="description">
-                                        </tr>
-                                        <tr>
-                                            <label for="image">Image:</label>
-                                            <input type="file" id="i-image" name="image accept="image/*>
-                                        </tr>
-                                    </table>
+                                    <div class="form-group">
+                                        <label for="lat">Lat:</label><br>
+                                        <input type="text" id="i-lat" name="lat">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="lon">Lon:</label><br>
+                                        <input type="text" id="i-lon" name="lon">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="description">Description:</label><br>
+                                        <input type="text" id="i-description" name="description">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="image">Image:</label><br>
+                                        <input type="file" id="i-image" name="image accept="image/*>
+                                    </div>
                                     <input type="submit" value="Save" />
                                 </form>
                                 `);
 
             window.addEventListener("map:init", e => {
                 const map = e.detail.map;
-                markers = new L.markerClusterGroup();
+                
 
                 map.addEventListener("click", e => {
                     if(current_marker !== null) //check if marker already exists and remove it if it does
@@ -63,9 +62,20 @@
                     })
                 });
                 
-                //add the images in the database to the map
+                //add the images in the database to the map in a cluster
+                markers = new L.markerClusterGroup();
+                let temp_marker;
                 {% for image in images%}
-                    markers.addLayer(L.marker(["{{ image.location.y }}", "{{ image.location.x }}"]));
+                    //set temporary marker and append a popup to it with the information
+                    temp_marker = L.marker(["{{ image.location.y }}", "{{ image.location.x }}"]);
+                    //create the popup and bind it
+                    temp_marker.bindPopup(`
+                        <p>{{ image.description }}</p>
+                        <p>Freguesia: {{ image.freguesia }}</p>
+                        <p>Lat: {{ image.location.y }}</p>
+                        <p>Lon: {{ image.location.x }}</p>
+                    `);
+                    markers.addLayer(temp_marker);
                 {% endfor %}
 
                 map.addLayer(markers);

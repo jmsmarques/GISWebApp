@@ -1,5 +1,6 @@
 #my_map {
   height: 500px;
+  cursor: pointer;
 }
 #my_map .django-leaflet-raw-textarea {
   width: 100%;
