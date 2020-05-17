@@ -5,10 +5,13 @@
 {% block little_script %}
     {% leaflet_js %}
     {% leaflet_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'gisMap/LeafletClustering/MarkerCluster.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'gisMap/LeafletClustering/MarkerCluster.Default.css' %}">
+    <script src="{% static 'gisMap/LeafletClustering/leaflet.markercluster.js' %}"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
 
-            var current_marker = null, lat, lon;
+            var current_marker = null, lat, lon, markers;
 
             var markerPopup = L.popup()
                                 .setContent(` 
@@ -38,7 +41,8 @@
 
             window.addEventListener("map:init", e => {
                 const map = e.detail.map;
-                
+                markers = new L.markerClusterGroup();
+
                 map.addEventListener("click", e => {
                     if(current_marker !== null) //check if marker already exists and remove it if it does
                         current_marker.remove();
@@ -61,9 +65,10 @@
                 
                 //add the images in the database to the map
                 {% for image in images%}
-                    L.marker(["{{ image.location.y }}", "{{ image.location.x }}"]).addTo(map);
+                    markers.addLayer(L.marker(["{{ image.location.y }}", "{{ image.location.x }}"]));
                 {% endfor %}
 
+                map.addLayer(markers);
             }, false);
 
             function fillMarkerLatLon(lat, lon) {
