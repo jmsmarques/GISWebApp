@@ -74,6 +74,11 @@
                         <p>Freguesia: {{ image.freguesia }}</p>
                         <p>Lat: {{ image.location.y }}</p>
                         <p>Lon: {{ image.location.x }}</p>
+                        <form action=\"{% url 'remove_image' %}\" method="POST">
+                        {% csrf_token %}
+                            <input type="hidden" id="img_id" name="img_id" value={{ image.id }}>
+                            <button type="submit" class="btn btn-primary">Remove</button>
+                        </form>
                     `);
                     markers.addLayer(temp_marker);
                 {% endfor %}
@@ -95,6 +100,12 @@
     <h1>Welcome</h1>
 
     {% leaflet_map "my_map" %}
+
+    {% if message is not None %}
+        <div class="alert alert-danger" role="alert">
+            {{ message }}
+        </div>
+    {% endif %}
 
     <a class="btn btn-primary" href="{% url 'logout' %}">Logout</a>
 {% endblock %}

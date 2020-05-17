@@ -62,9 +62,10 @@ def add_image(request):
 
         new_image = Image(description=description, image=image, location=location, freguesia=freguesia)
         new_image.save()
+        message = "Point added"
     except Exception as e:
-        print("Point addition failed")
-        message = "Addition failed"
+        print(f"Point addition failed because {e}")
+        message = "Point addition failed"
         
     #set context to include all the images in the database
     context = {
@@ -74,3 +75,25 @@ def add_image(request):
 
     return render(request, "gisMap/index.html", context)
 
+def remove_image(request):
+    if not request.user.is_authenticated: #verify that the user is logged in
+        return render(request, "gisMap/login.html")
+
+    message = None  #Message to send to user in case of failure
+
+    try:
+        img_id = request.POST["img_id"]
+        #search for the image in the database and delete it
+        Image.objects.get(id=img_id).delete()
+        message = "Image removal successful"
+    except Exception as e:
+        print(f"Point remove failed because {e}")
+        message = "Point removal failed"
+
+    #set context to include all the images in the database
+    context = {
+        "images": Image.objects.all(),
+        "message": message
+    }
+
+    return render(request, "gisMap/index.html", context)
