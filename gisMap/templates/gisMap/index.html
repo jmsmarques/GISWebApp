@@ -20,27 +20,39 @@
                                 {% csrf_token %}
                                     <div class="form-group">
                                         <label for="lat">Lat:</label><br>
-                                        <input type="text" id="i-lat" name="lat">
+                                        <input type="text" id="i-lat" name="lat" class="i-input">
                                     </div>
                                     <div class="form-group">
                                         <label for="lon">Lon:</label><br>
-                                        <input type="text" id="i-lon" name="lon">
+                                        <input type="text" id="i-lon" name="lon" class="i-input">
                                     </div>
                                     <div class="form-group">
                                         <label for="description">Description:</label><br>
-                                        <input type="text" id="i-description" name="description">
+                                        <input type="text" id="i-description" name="description" class="i-input">
                                     </div>
                                     <div class="form-group">
                                         <label for="image">Image:</label><br>
                                         <input type="file" id="i-image" name="image accept="image/*>
                                     </div>
-                                    <input type="submit" value="Save" />
+                                    <button type="submit" id="img-submit" class="btn btn-primary">Save</button>
                                 </form>
                                 `);
 
             window.addEventListener("map:init", e => {
                 const map = e.detail.map;
                 
+                //create a div to place the lat and lon values of the mouse
+                latlngDiv = document.createElement("div");
+                latlngDiv.setAttribute("class", "leaflet-control-scale");
+                latlngDivContent = document.createElement("div");
+                latlngDiv.setAttribute("id", "mouse-latlng");
+                latlngDiv.append(latlngDivContent);
+
+                document.querySelector(".leaflet-bottom.leaflet-bottom").append(latlngDiv);
+                //add the listener to update the values
+                map.addEventListener('mousemove', e => {
+                    document.querySelector("#mouse-latlng").innerHTML = "Lat: " + e.latlng.lat.toFixed(5)+ " Lon: " + e.latlng.lng.toFixed(5);
+                });
 
                 map.addEventListener("click", e => {
                     if(current_marker !== null) //check if marker already exists and remove it if it does
@@ -55,11 +67,14 @@
                     //on popup open fill the lat and lon fields and set to readonly
                     current_marker.addEventListener('popupopen', () => {
                         fillMarkerLatLon(lat, lon);
+                        deactivateBtn();
                     });
 
                     current_marker.addEventListener('dblclick', () => {
                         current_marker.remove();
                     })
+
+                    current_marker.openPopup();
                 });
                 
                 //add the images in the database to the map in a cluster
@@ -91,6 +106,17 @@
                 document.querySelector('#i-lon').value= lon;
                 document.querySelector('#i-lat').readOnly = true;
                 document.querySelector('#i-lon').readOnly = true;
+            }
+
+            function deactivateBtn() {
+                //deactivate the submit button and only activate it when there is something written in description    
+                document.querySelector('#img-submit').disabled = true;
+                document.querySelector('#i-description').onkeyup = () => {
+                    if(document.querySelector('#i-description').value.length > 0)
+                        document.querySelector('#img-submit').disabled = false;
+                    else
+                        document.querySelector('#img-submit').disabled = true;
+                };
             }
         });
     </script>

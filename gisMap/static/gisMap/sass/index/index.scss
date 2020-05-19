@@ -5,4 +5,31 @@
     .django-leaflet-raw-textarea {
         width:100%; 
     }
+
+    .leaflet-popup-content-wrapper {
+        #i-image:hover {
+            cursor: pointer;
+        }
+
+        .i-input:hover {
+            cursor: text;
+            background-color: #F8F8F8;
+        }
+    }
+
+    #mouse-latlng {
+        border: 2px solid #777;
+            border-top-color: rgb(119, 119, 119);
+            border-top-style: solid;
+            border-top-width: 2px;
+        border-top: none;
+        border-left: none;
+        line-height: 1.1;
+        padding: 2px 5px 1px;
+        font-size: 11px;
+        white-space: nowrap;
+        overflow: hidden;
+        box-sizing: border-box;
+        background: rgba(255, 255, 255, 0.5);
+    }
 }

@@ -5,5 +5,27 @@
 #my_map .django-leaflet-raw-textarea {
   width: 100%;
 }
+#my_map .leaflet-popup-content-wrapper #i-image:hover {
+  cursor: pointer;
+}
+#my_map .leaflet-popup-content-wrapper .i-input:hover {
+  cursor: text;
+  background-color: #F8F8F8;
+}
+#my_map #mouse-latlng {
+  border: 2px solid #777;
+  border-top-color: #777777;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top: none;
+  border-left: none;
+  line-height: 1.1;
+  padding: 2px 5px 1px;
+  font-size: 11px;
+  white-space: nowrap;
+  overflow: hidden;
+  box-sizing: border-box;
+  background: rgba(255, 255, 255, 0.5);
+}
 
 /*# sourceMappingURL=style.css.map */
