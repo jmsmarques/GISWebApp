@@ -59,10 +59,8 @@ def add_image(request):
 
         #intersect the location with the freguesias to find in which one it is located
         freguesia = Freguesia.objects.get(geom__contains=location)
-        concelho = freguesia.concelho
-        distrito = freguesia.concelho.distrito
 
-        new_image = Image(description=description, image=image, location=location, freguesia=freguesia, concelho=concelho, distrito=distrito)
+        new_image = Image(description=description, image=image, location=location, freguesia=freguesia)
         new_image.save()
         message = "Point added"
     except Exception as e:

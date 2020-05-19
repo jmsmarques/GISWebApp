@@ -39,8 +39,6 @@ class Image(models.Model):
     description = models.CharField(max_length=100)
     image = models.ImageField(upload_to='images/')
     freguesia = models.ForeignKey('Freguesia', on_delete=models.CASCADE, default=None)
-    concelho = models.ForeignKey('Concelho', on_delete=models.CASCADE, default=None)
-    distrito = models.ForeignKey('Distrito', on_delete=models.CASCADE, default=None)
     location = models.PointField()
 
     def __str__(self):
