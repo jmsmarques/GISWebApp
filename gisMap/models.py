@@ -8,7 +8,7 @@ class Distrito(models.Model):
     geom = models.MultiPolygonField()
 
     def __str__(self):
-        return self.distrito
+        return str.title(self.distrito)
 
 class Concelho(models.Model):
     concelho = models.CharField(max_length=254, primary_key=True)
@@ -19,7 +19,7 @@ class Concelho(models.Model):
     geom = models.MultiPolygonField()
 
     def __str__(self):
-        return self.concelho
+        return str.title(self.concelho)
 
 
 class Freguesia(models.Model):
@@ -38,7 +38,9 @@ class Freguesia(models.Model):
 class Image(models.Model):
     description = models.CharField(max_length=100)
     image = models.ImageField(upload_to='images/')
-    freguesia = models.ForeignKey('Freguesia', on_delete=models.CASCADE)
+    freguesia = models.ForeignKey('Freguesia', on_delete=models.CASCADE, default=None)
+    concelho = models.ForeignKey('Concelho', on_delete=models.CASCADE, default=None)
+    distrito = models.ForeignKey('Distrito', on_delete=models.CASCADE, default=None)
     location = models.PointField()
 
     def __str__(self):

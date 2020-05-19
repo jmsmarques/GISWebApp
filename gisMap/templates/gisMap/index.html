@@ -87,6 +87,8 @@
                     temp_marker.bindPopup(`
                         <p>{{ image.description }}</p>
                         <p>Freguesia: {{ image.freguesia }}</p>
+                        <p>Concelho: {{ image.concelho }}</p>
+                        <p>Distrito: {{ image.distrito }}</p>
                         <p>Lat: {{ image.location.y }}</p>
                         <p>Lon: {{ image.location.x }}</p>
                         <form action=\"{% url 'remove_image' %}\" method="POST">
