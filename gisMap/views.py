@@ -44,7 +44,7 @@ def register_view(request):
     login(request, user) #login the newly registered user
     return render(request, "gisMap/index.html")
 
-
+@require_http_methods(["POST"])
 def add_image(request):
     if not request.user.is_authenticated: #verify that the user is logged in
         return render(request, "gisMap/login.html")
@@ -75,6 +75,7 @@ def add_image(request):
 
     return render(request, "gisMap/index.html", context)
 
+@require_http_methods(["POST"])
 def remove_image(request):
     if not request.user.is_authenticated: #verify that the user is logged in
         return render(request, "gisMap/login.html")

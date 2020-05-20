@@ -34,7 +34,7 @@ class Freguesia(models.Model):
 
     def __str__(self):
         return self.freguesia
-
+    
 class Image(models.Model):
     description = models.CharField(max_length=100)
     image = models.ImageField(upload_to='images/')
