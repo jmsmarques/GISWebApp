@@ -1,31 +1,31 @@
 from django.contrib.gis.db import models
 
-class Distrito(models.Model):
-    distrito = models.CharField(max_length=254, primary_key=True)
+class District(models.Model):
+    district_name = models.CharField(max_length=254, primary_key=True)
     taa = models.CharField(max_length=254)
     area_ea_ha = models.FloatField()
     area_t_ha = models.FloatField()
     geom = models.MultiPolygonField()
 
     def __str__(self):
-        return str.title(self.distrito)
+        return str.title(self.district_name)
 
-class Concelho(models.Model):
-    concelho = models.CharField(max_length=254, primary_key=True)
-    distrito = models.ForeignKey('Distrito', on_delete=models.CASCADE, to_field='distrito', related_name='concelho')
+class Municipality(models.Model):
+    municipality_name = models.CharField(max_length=254, primary_key=True)
+    district_name = models.ForeignKey('District', on_delete=models.CASCADE, to_field='district_name', related_name='municipality')
     taa = models.CharField(max_length=254)
     area_ea_ha = models.FloatField()
     area_t_ha = models.FloatField()
     geom = models.MultiPolygonField()
 
     def __str__(self):
-        return str.title(self.concelho)
+        return str.title(self.municipality_name)
 
 
-class Freguesia(models.Model):
+class Parish(models.Model):
     dicofre = models.CharField(max_length=254, primary_key=True)
-    freguesia = models.CharField(max_length=254)
-    concelho = models.ForeignKey('Concelho', on_delete=models.CASCADE, to_field='concelho', related_name='freguesia')
+    parish_name = models.CharField(max_length=254)
+    municipality_name = models.ForeignKey('Municipality', on_delete=models.CASCADE, to_field='municipality_name', related_name='parish')
     taa = models.CharField(max_length=254)
     area_ea_ha = models.FloatField()
     area_t_ha = models.FloatField()
@@ -33,12 +33,12 @@ class Freguesia(models.Model):
     geom = models.MultiPolygonField()
 
     def __str__(self):
-        return self.freguesia
+        return self.parish_name
     
-class Image(models.Model):
+class ImagePoint(models.Model):
     description = models.CharField(max_length=100)
     image = models.ImageField(upload_to='images/')
-    freguesia = models.ForeignKey('Freguesia', on_delete=models.CASCADE, default=None)
+    parish_name = models.ForeignKey('Parish', on_delete=models.CASCADE, default=None)
     location = models.PointField()
 
     def __str__(self):

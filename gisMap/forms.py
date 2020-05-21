@@ -1,8 +1,8 @@
 from django import forms
-from .models import Image
+from .models import ImagePoint
 
-class ImageForm(forms.ModelForm):
+class ImagePointForm(forms.ModelForm):
     class Meta:
-        model = Image
+        model = ImagePoint
         fields = ['description', 'image']
 

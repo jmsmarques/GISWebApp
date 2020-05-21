@@ -6,8 +6,9 @@ from django.views.decorators.http import require_http_methods
 from django.core.files.storage import FileSystemStorage
 from django.contrib.gis.geos import Point
 from django.contrib.auth.models import User
-from .models import Freguesia, Image, Concelho
-from .forms import ImageForm
+from django.core.serializers import serialize
+from .models import Parish, ImagePoint, Municipality
+from .forms import ImagePointForm
 
 def index(request):
     if not request.user.is_authenticated:
@@ -15,8 +16,8 @@ def index(request):
     #set context to include all the images in the database
     context = {
         "user": request.user.username,
-        "images": Image.objects.all(),
-        "form": ImageForm()
+        "images": ImagePoint.objects.all(),
+        "form": ImagePointForm()
     }
     return render(request, "gisMap/index.html", context)
 
@@ -27,7 +28,7 @@ def login_view(request):
     user = authenticate(request, username=username, password=password)
     if user is not None:
         login(request, user)
-        return HttpResponseRedirect(reverse("index"), {"user": request.user.username, "form": ImageForm()})
+        return HttpResponseRedirect(reverse("index"), {"user": request.user.username, "form": ImagePointForm()})
     else:
         return render(request, "gisMap/login.html", {"message": "Invalid credentials"})
 
@@ -49,7 +50,7 @@ def register_view(request):
 
     context = {
         "user": request.user.username,
-        "form": ImageForm()
+        "form": ImagePointForm()
     }
 
     return render(request, "gisMap/index.html")
@@ -61,7 +62,7 @@ def add_image(request):
     
     message = None  #Message to send to user in case of failure
     try:
-        form = ImageForm(request.POST, request.FILES)
+        form = ImagePointForm(request.POST, request.FILES)
         if form.is_valid():
             description = request.POST["description"]
             lat = float(request.POST["lat"])
@@ -71,10 +72,10 @@ def add_image(request):
             #upload the image
             image = request.FILES["image"]
 
-            #intersect the location with the freguesias to find in which one it is located
-            freguesia = Freguesia.objects.get(geom__contains=location)
+            #intersect the location with the parish_names to find in which one it is located
+            parish_name = Parish.objects.get(geom__contains=location)
 
-            new_image = Image(description=description, image=image, location=location, freguesia=freguesia)
+            new_image = ImagePoint(description=description, image=image, location=location, parish_name=parish_name)
             new_image.save()
             message = "Point added"
     except Exception as e:
@@ -84,9 +85,9 @@ def add_image(request):
     #set context to include all the images in the database
     context = {
         "user": request.user.username,
-        "images": Image.objects.all(),
+        "images": ImagePoint.objects.all(),
         "message": message,
-        "form": ImageForm()
+        "form": ImagePointForm()
     }
 
     return render(request, "gisMap/index.html", context)
@@ -101,7 +102,7 @@ def remove_image(request):
     try:
         img_id = request.POST["img_id"]
         #search for the image in the database and delete it
-        Image.objects.get(id=img_id).delete()
+        ImagePoint.objects.get(id=img_id).delete()
         message = "Image removal successful"
     except Exception as e:
         print(f"Point remove failed because {e}")
@@ -110,9 +111,34 @@ def remove_image(request):
     #set context to include all the images in the database
     context = {
         "user": request.user.username,
-        "images": Image.objects.all(),
+        "images": ImagePoint.objects.all(),
         "message": message,
-        "form": ImageForm()
+        "form": ImagePointForm()
+    }
+
+    return render(request, "gisMap/index.html", context)
+
+def download_image(request): #function that allows the download of an image
+    if not request.user.is_authenticated: #verify that the user is logged in
+        return render(request, "gisMap/login.html")
+
+    message = None  #Message to send to user in case of failure
+
+    #prepare geojson for download
+    img_id = request.POST["img_id"] #img to download
+
+    file_to_download = serialize('geojson', [ImagePoint.objects.get(id=img_id),], 
+        geometry_field = 'point',
+        fields = ['parish_name', 'parish_name.concelho', 'image', 'location']
+    )
+
+    print(file_to_download)
+
+    context = {
+        "user": request.user.username,
+        "images": ImagePoint.objects.all(),
+        "message": message,
+        "form": ImagePointForm()
     }
 
     return render(request, "gisMap/index.html", context)

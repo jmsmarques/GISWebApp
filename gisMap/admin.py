@@ -1,14 +1,14 @@
 from django.contrib import admin
 from leaflet.admin import LeafletGeoAdmin, LeafletGeoAdminMixin
 
-from .models import Image, Distrito, Concelho, Freguesia
+from .models import ImagePoint, District, Municipality, Parish
 
-class ConcelhoInLine(LeafletGeoAdminMixin, admin.StackedInline):
-    model = Concelho
+class MunicipalityInLine(LeafletGeoAdminMixin, admin.StackedInline):
+    model = Municipality
     classes = ['collapse']
     fieldsets = (
         (None, {
-            'fields': ('concelho',)
+            'fields': ('municipality_name',)
         }),
         ('Map area', {
             'classes': ('collapse',),
@@ -16,12 +16,12 @@ class ConcelhoInLine(LeafletGeoAdminMixin, admin.StackedInline):
         }),
     )
 
-class FreguesiaInLine(LeafletGeoAdminMixin, admin.StackedInline):
-    model = Freguesia
+class ParishInLine(LeafletGeoAdminMixin, admin.StackedInline):
+    model = Parish
     classes = ['collapse']
     fieldsets = (
         (None, {
-            'fields': ('freguesia',)
+            'fields': ('parish_name',)
         }),
         ('Map area', {
             'classes': ('collapse',),
@@ -29,33 +29,33 @@ class FreguesiaInLine(LeafletGeoAdminMixin, admin.StackedInline):
         }),
     )
 
-class DistritoComplete(LeafletGeoAdmin):
+class DistrictComplete(LeafletGeoAdmin):
     inlines = [
-        ConcelhoInLine,
+        MunicipalityInLine,
     ]
-    search_fields = ('distrito',)
+    search_fields = ('district_name',)
 
-class ConcelhoComplete(LeafletGeoAdmin):
+class MunicipalityComplete(LeafletGeoAdmin):
     inlines = [
-        FreguesiaInLine,
+        ParishInLine,
     ]
-    list_display = ['concelho', 'distrito']
-    search_fields = ('concelho',)
+    list_display = ['municipality_name', 'district_name']
+    search_fields = ('municipality_name',)
 
 
-class FreguesiaComplete(LeafletGeoAdmin):
-    fields = ('dicofre', 'freguesia', 'concelho', 'distrito_name', 'taa', 'area_ea_ha', 'area_t_ha', 'des_simpli', 'geom')
-    list_display = ['freguesia', 'concelho', 'distrito_name']
-    readonly_fields = ('distrito_name',)
-    search_fields = ('freguesia',)
+class ParishComplete(LeafletGeoAdmin):
+    fields = ('dicofre', 'parish_name', 'municipality_name', 'district_name', 'taa', 'area_ea_ha', 'area_t_ha', 'des_simpli', 'geom')
+    list_display = ['parish_name', 'municipality_name', 'district_name']
+    readonly_fields = ('district_name',)
+    search_fields = ('parish_name',)
 
-    def distrito_name(self, obj):
-        return obj.concelho.distrito
-    distrito_name.short_description = 'Distrito'
+    def district_name(self, obj):
+        return obj.municipality_name.district_name
+    district_name.short_description = 'District'
     
 
 #Admin data registration
-admin.site.register(Image, LeafletGeoAdmin)
-admin.site.register(Distrito, DistritoComplete)
-admin.site.register(Concelho, ConcelhoComplete)
-admin.site.register(Freguesia, FreguesiaComplete)
+admin.site.register(ImagePoint, LeafletGeoAdmin)
+admin.site.register(District, DistrictComplete)
+admin.site.register(Municipality, MunicipalityComplete)
+admin.site.register(Parish, ParishComplete)

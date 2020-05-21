@@ -1,12 +1,12 @@
 import os
 from django.contrib.gis.utils import LayerMapping
-from .models import Distrito, Concelho, Freguesia
+from .models import District, Municipality, Parish
 
 # Auto-generated `LayerMapping` dictionary for Freguesia model
-freguesia_mapping = {
+parish_mapping = {
     'dicofre': 'Dicofre',
-    'freguesia': 'Freguesia',
-    'concelho': {'concelho': 'Concelho'},
+    'parish_name': 'Freguesia',
+    'municipality_name': {'municipality_name': 'Concelho'},
     'taa': 'TAA',
     'area_ea_ha': 'AREA_EA_Ha',
     'area_t_ha': 'AREA_T_Ha',
@@ -15,9 +15,9 @@ freguesia_mapping = {
 }
 
 # Auto-generated `LayerMapping` dictionary for Concelho model
-concelho_mapping = {
-    'concelho': 'Concelho',
-    'distrito': {'distrito': 'Distrito'},
+municipality_mapping = {
+    'municipality_name': 'Concelho',
+    'district_name': {'district_name': 'Distrito'},
     'taa': 'TAA',
     'area_ea_ha': 'AREA_EA_Ha',
     'area_t_ha': 'AREA_T_Ha',
@@ -25,8 +25,8 @@ concelho_mapping = {
 }
 
 # Auto-generated `LayerMapping` dictionary for Distritos model
-distrito_mapping = {
-    'distrito': 'Distrito',
+district_mapping = {
+    'district_name': 'Distrito',
     'taa': 'TAA',
     'area_ea_ha': 'AREA_EA_Ha',
     'area_t_ha': 'AREA_T_Ha',
@@ -37,23 +37,23 @@ district_shp = os.path.abspath(
     os.path.join(os.path.dirname(__file__), 'data', 'Distritos/Distritos_WGS84.shp'),
 )
 
-concelho_shp = os.path.abspath(
+municipality_shp = os.path.abspath(
     os.path.join(os.path.dirname(__file__), 'data', 'Concelhos/Concelhos_WGS84.shp'),
 )
 
-freguesia_shp = os.path.abspath(
+parish_shp = os.path.abspath(
     os.path.join(os.path.dirname(__file__), 'data', 'Freguesias/Freguesias_WGS84.shp'),
 )
 
 def run(verbose=True):
     #Districts migration
-    districts = LayerMapping(Distrito, district_shp, distrito_mapping, transform=False)
+    districts = LayerMapping(District, district_shp, district_mapping, transform=False)
     districts.save(strict=True, verbose=verbose)
 
-    #Concelhos migration
-    concelhos = LayerMapping(Concelho, concelho_shp, concelho_mapping, transform=False)
-    concelhos.save(strict=True, verbose=verbose)
+    #Municipalities migration
+    municipalities = LayerMapping(Municipality, municipality_shp, municipality_mapping, transform=False)
+    municipalities.save(strict=True, verbose=verbose)
 
-    #Freguesia migration
-    freguesias = LayerMapping(Freguesia, freguesia_shp, freguesia_mapping, transform=False)
-    freguesias.save(strict=True, verbose=verbose)
+    #Parishies migration
+    parishies = LayerMapping(Parish, parish_shp, parish_mapping, transform=False)
+    parishies.save(strict=True, verbose=verbose)
