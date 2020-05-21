@@ -16,24 +16,17 @@
 
             var markerPopup = L.popup()
                                 .setContent(` 
-                                <form action=\"{% url 'add_image' %}\" method="POST">
-                                {% csrf_token %}
+                                <form action=\"{% url 'add_image' %}\" method="POST" enctype="multipart/form-data">
+                                    {% csrf_token %}
                                     <div class="form-group">
                                         <label for="lat">Lat:</label><br>
-                                        <input type="text" id="i-lat" name="lat" class="i-input">
+                                        <input type="text" id="i-lat" name="lat" class="i-input" readonly>
                                     </div>
                                     <div class="form-group">
                                         <label for="lon">Lon:</label><br>
-                                        <input type="text" id="i-lon" name="lon" class="i-input">
+                                        <input type="text" id="i-lon" name="lon" class="i-input" readonly>
                                     </div>
-                                    <div class="form-group">
-                                        <label for="description">Description:</label><br>
-                                        <input type="text" id="i-description" name="description" class="i-input">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="image">Image:</label><br>
-                                        <input type="file" id="i-image" name="image accept="image/*>
-                                    </div>
+                                    {{ form.as_p|escapejs }}
                                     <button type="submit" id="img-submit" class="btn btn-primary">Save</button>
                                 </form>
                                 `);
@@ -86,6 +79,7 @@
                     //create the popup and bind it
                     temp_marker.bindPopup(`
                         <p>{{ image.description }}</p>
+                        <p>Image: <img width="75%" src={{ image.image.url }} alt="Image"></p>
                         <p>Freguesia: {{ image.freguesia }}</p>
                         <p>Concelho: {{ image.freguesia.concelho }}</p>
                         <p>Distrito: {{ image.freguesia.concelho.distrito }}</p>
@@ -106,15 +100,13 @@
             function fillMarkerLatLon(lat, lon) {
                 document.querySelector('#i-lat').value = lat;
                 document.querySelector('#i-lon').value= lon;
-                document.querySelector('#i-lat').readOnly = true;
-                document.querySelector('#i-lon').readOnly = true;
             }
 
             function deactivateBtn() {
                 //deactivate the submit button and only activate it when there is something written in description    
                 document.querySelector('#img-submit').disabled = true;
-                document.querySelector('#i-description').onkeyup = () => {
-                    if(document.querySelector('#i-description').value.length > 0)
+                document.querySelector('#id_description').onkeyup = () => {
+                    if(document.querySelector('#id_description').value.length > 0)
                         document.querySelector('#img-submit').disabled = false;
                     else
                         document.querySelector('#img-submit').disabled = true;
@@ -125,7 +117,7 @@
 {% endblock %}
 
 {% block body %}
-    <h1>Welcome</h1>
+    <h1>Welcome {{ user }} </h1>
 
     {% leaflet_map "my_map" %}
 

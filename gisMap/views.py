@@ -3,16 +3,20 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
+from django.core.files.storage import FileSystemStorage
 from django.contrib.gis.geos import Point
 from django.contrib.auth.models import User
 from .models import Freguesia, Image, Concelho
+from .forms import ImageForm
 
 def index(request):
     if not request.user.is_authenticated:
         return render(request, "gisMap/login.html")
     #set context to include all the images in the database
     context = {
-        "images": Image.objects.all()
+        "user": request.user.username,
+        "images": Image.objects.all(),
+        "form": ImageForm()
     }
     return render(request, "gisMap/index.html", context)
 
@@ -23,7 +27,7 @@ def login_view(request):
     user = authenticate(request, username=username, password=password)
     if user is not None:
         login(request, user)
-        return HttpResponseRedirect(reverse("index"))
+        return HttpResponseRedirect(reverse("index"), {"user": request.user.username, "form": ImageForm()})
     else:
         return render(request, "gisMap/login.html", {"message": "Invalid credentials"})
 
@@ -42,6 +46,12 @@ def register_view(request):
     user.save()
 
     login(request, user) #login the newly registered user
+
+    context = {
+        "user": request.user.username,
+        "form": ImageForm()
+    }
+
     return render(request, "gisMap/index.html")
 
 @require_http_methods(["POST"])
@@ -51,26 +61,32 @@ def add_image(request):
     
     message = None  #Message to send to user in case of failure
     try:
-        description = request.POST["description"]
-        image = request.POST.get("image", None)
-        lat = float(request.POST["lat"])
-        lon = float(request.POST["lon"])
-        location = Point(lon, lat)
+        form = ImageForm(request.POST, request.FILES)
+        if form.is_valid():
+            description = request.POST["description"]
+            lat = float(request.POST["lat"])
+            lon = float(request.POST["lon"])
+            location = Point(lon, lat)
 
-        #intersect the location with the freguesias to find in which one it is located
-        freguesia = Freguesia.objects.get(geom__contains=location)
+            #upload the image
+            image = request.FILES["image"]
 
-        new_image = Image(description=description, image=image, location=location, freguesia=freguesia)
-        new_image.save()
-        message = "Point added"
+            #intersect the location with the freguesias to find in which one it is located
+            freguesia = Freguesia.objects.get(geom__contains=location)
+
+            new_image = Image(description=description, image=image, location=location, freguesia=freguesia)
+            new_image.save()
+            message = "Point added"
     except Exception as e:
         print(f"Point addition failed because {e}")
         message = "Point addition failed"
         
     #set context to include all the images in the database
     context = {
+        "user": request.user.username,
         "images": Image.objects.all(),
-        "message": message
+        "message": message,
+        "form": ImageForm()
     }
 
     return render(request, "gisMap/index.html", context)
@@ -93,8 +109,10 @@ def remove_image(request):
 
     #set context to include all the images in the database
     context = {
+        "user": request.user.username,
         "images": Image.objects.all(),
-        "message": message
+        "message": message,
+        "form": ImageForm()
     }
 
     return render(request, "gisMap/index.html", context)
