@@ -15,7 +15,7 @@ def index(request):
         return render(request, "gisMap/login.html")
     #set context to include all the images in the database
     context = {
-        "user": request.user.username,
+        "user": request.user,
         "images": ImagePoint.objects.all(),
         "form": ImagePointForm()
     }
@@ -28,7 +28,7 @@ def login_view(request):
     user = authenticate(request, username=username, password=password)
     if user is not None:
         login(request, user)
-        return HttpResponseRedirect(reverse("index"), {"user": request.user.username, "form": ImagePointForm()})
+        return HttpResponseRedirect(reverse("index"), {"user": request.user, "form": ImagePointForm()})
     else:
         return render(request, "gisMap/login.html", {"message": "Invalid credentials"})
 
@@ -49,7 +49,7 @@ def register_view(request):
     login(request, user) #login the newly registered user
 
     context = {
-        "user": request.user.username,
+        "user": request.user,
         "form": ImagePointForm()
     }
 
@@ -65,6 +65,8 @@ def add_image(request):
         form = ImagePointForm(request.POST, request.FILES)
         if form.is_valid():
             description = request.POST["description"]
+            author_id = request.POST["author"]
+            author = User.objects.get(id=author_id)
             lat = float(request.POST["lat"])
             lon = float(request.POST["lon"])
             location = Point(lon, lat)
@@ -75,7 +77,7 @@ def add_image(request):
             #intersect the location with the parish_names to find in which one it is located
             parish_name = Parish.objects.get(geom__contains=location)
 
-            new_image = ImagePoint(description=description, image=image, location=location, parish_name=parish_name)
+            new_image = ImagePoint(description=description, author=author, image=image, location=location, parish_name=parish_name)
             new_image.save()
             message = "Point added"
     except Exception as e:
@@ -84,7 +86,7 @@ def add_image(request):
         
     #set context to include all the images in the database
     context = {
-        "user": request.user.username,
+        "user": request.user,
         "images": ImagePoint.objects.all(),
         "message": message,
         "form": ImagePointForm()
@@ -110,7 +112,7 @@ def remove_image(request):
 
     #set context to include all the images in the database
     context = {
-        "user": request.user.username,
+        "user": request.user,
         "images": ImagePoint.objects.all(),
         "message": message,
         "form": ImagePointForm()
@@ -135,7 +137,7 @@ def download_image(request): #function that allows the download of an image
     print(file_to_download)
 
     context = {
-        "user": request.user.username,
+        "user": request.user,
         "images": ImagePoint.objects.all(),
         "message": message,
         "form": ImagePointForm()

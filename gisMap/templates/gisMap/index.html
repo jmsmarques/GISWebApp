@@ -18,6 +18,7 @@
                                 .setContent(` 
                                 <form action=\"{% url 'add_image' %}\" method="POST" enctype="multipart/form-data">
                                     {% csrf_token %}
+                                    <input type="hidden" name="author" value={{ user.id }}>
                                     <div class="form-group">
                                         <label for="lat">Lat:</label><br>
                                         <input type="text" id="i-lat" name="lat" class="i-input" readonly>
@@ -80,9 +81,10 @@
                     temp_marker.bindPopup(`
                         <p>{{ image.description }}</p>
                         <p>Image: <img width="75%" src={{ image.image.url }} alt="Image"></p>
-                        <p>Parish: {{ image.freguesia }}</p>
-                        <p>Municipality: {{ image.freguesia.concelho }}</p>
-                        <p>District: {{ image.freguesia.concelho.distrito }}</p>
+                        <p>Author: {{ image.author }}</p>
+                        <p>Parish: {{ image.parish_name }}</p>
+                        <p>Municipality: {{ image.parish_name.municipality_name }}</p>
+                        <p>District: {{ image.parish_name.municipality_name.district_name }}</p>
                         <p>Lat: {{ image.location.y }}</p>
                         <p>Lon: {{ image.location.x }}</p>
                         <div class="row">
@@ -124,7 +126,7 @@
 {% endblock %}
 
 {% block body %}
-    <h1>Welcome {{ user }} </h1>
+    <h1>Welcome {{ user.username }} </h1>
 
     {% leaflet_map "my_map" %}
 

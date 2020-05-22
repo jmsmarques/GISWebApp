@@ -1,4 +1,5 @@
 from django.contrib.gis.db import models
+from django.contrib.auth.models import User
 
 class District(models.Model):
     district_name = models.CharField(max_length=254, primary_key=True)
@@ -38,7 +39,8 @@ class Parish(models.Model):
 class ImagePoint(models.Model):
     description = models.CharField(max_length=100)
     image = models.ImageField(upload_to='images/')
-    parish_name = models.ForeignKey('Parish', on_delete=models.CASCADE, default=None)
+    parish_name = models.ForeignKey('Parish', on_delete=models.CASCADE, default=None, related_name='images_point')
+    author = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True, related_name='images_point')
     location = models.PointField()
 
     def __str__(self):
