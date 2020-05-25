@@ -1,5 +1,6 @@
 Django==2.2.10
 django-leaflet==0.26.0
+geojson==2.5.0
 gunicorn==20.0.4
 Pillow==7.1.2
 psycopg2==2.8.5

@@ -6,7 +6,7 @@ class District(models.Model):
     taa = models.CharField(max_length=254)
     area_ea_ha = models.FloatField()
     area_t_ha = models.FloatField()
-    geom = models.MultiPolygonField()
+    geom = models.MultiPolygonField(srid=4326)
 
     def __str__(self):
         return str.title(self.district_name)
@@ -17,11 +17,10 @@ class Municipality(models.Model):
     taa = models.CharField(max_length=254)
     area_ea_ha = models.FloatField()
     area_t_ha = models.FloatField()
-    geom = models.MultiPolygonField()
+    geom = models.MultiPolygonField(srid=4326)
 
     def __str__(self):
         return str.title(self.municipality_name)
-
 
 class Parish(models.Model):
     dicofre = models.CharField(max_length=254, primary_key=True)
@@ -31,11 +30,11 @@ class Parish(models.Model):
     area_ea_ha = models.FloatField()
     area_t_ha = models.FloatField()
     des_simpli = models.CharField(max_length=254)
-    geom = models.MultiPolygonField()
+    geom = models.MultiPolygonField(srid=4326)
 
     def __str__(self):
         return self.parish_name
-    
+
 class ImagePoint(models.Model):
     description = models.CharField(max_length=100)
     image = models.ImageField(upload_to='images/')

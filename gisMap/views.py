@@ -1,5 +1,6 @@
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render
+from django.conf import settings
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
@@ -9,6 +10,9 @@ from django.contrib.auth.models import User
 from django.core.serializers import serialize
 from .models import Parish, ImagePoint, Municipality
 from .forms import ImagePointForm
+from zipfile import ZipFile
+from io import BytesIO, StringIO
+import os, geojson, tempfile
 
 def index(request):
     if not request.user.is_authenticated:
@@ -129,18 +133,23 @@ def download_image(request): #function that allows the download of an image
     #prepare geojson for download
     img_id = request.POST["img_id"] #img to download
 
-    file_to_download = serialize('geojson', [ImagePoint.objects.get(id=img_id),], 
-        geometry_field = 'point',
-        fields = ['parish_name', 'parish_name.concelho', 'image', 'location']
-    )
+    img = ImagePoint.objects.get(id=img_id)
 
-    print(file_to_download)
+    img_info = geojson.Feature(geometry= geojson.Point((img.location.x, img.location.y)),
+                            properties = {"District": str.title(img.parish_name.municipality_name.district_name.district_name),
+                                            "Municipality": str.title(img.parish_name.municipality_name.municipality_name),
+                                            "Parish": img.parish_name.parish_name})
+    features = []
+    features.append(img_info)
+    file_to_download = geojson.FeatureCollection(features)
+    #endof json preparation
 
-    context = {
-        "user": request.user,
-        "images": ImagePoint.objects.all(),
-        "message": message,
-        "form": ImagePointForm()
-    }
+    mem_file = BytesIO() #memory where the zip file will be created
+    with ZipFile(mem_file, 'w') as zipFolder: #create a zipped folder to return to the user
+        zipFolder.writestr('image_data.geojson', geojson.dumps(file_to_download))
+        zipFolder.write(settings.BASE_DIR + img.image, 'image.jpeg')
 
-    return render(request, "gisMap/index.html", context)
+    mem_file.seek(0)
+    response = HttpResponse(mem_file.read(), content_type="application/zip")
+    response['Content-Disposition'] = 'attachment; filename="%s.zip"'%img
+    return response
