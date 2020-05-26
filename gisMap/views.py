@@ -65,6 +65,8 @@ def add_image(request):
         return render(request, "gisMap/login.html")
     
     message = None  #Message to send to user in case of failure
+    mousepos = None #Point added position, used to keep the map view on place on reload
+
     try:
         form = ImagePointForm(request.POST, request.FILES)
         if form.is_valid():
@@ -74,7 +76,7 @@ def add_image(request):
             lat = float(request.POST["lat"])
             lon = float(request.POST["lon"])
             location = Point(lon, lat)
-
+            mousepos = location
             #upload the image
             image = request.FILES["image"]
 
@@ -93,7 +95,8 @@ def add_image(request):
         "user": request.user,
         "images": ImagePoint.objects.all(),
         "message": message,
-        "form": ImagePointForm()
+        "form": ImagePointForm(),
+        "mousepos": mousepos
     }
 
     return render(request, "gisMap/index.html", context)
@@ -104,11 +107,14 @@ def remove_image(request):
         return render(request, "gisMap/login.html")
 
     message = None  #Message to send to user in case of failure
+    mousepos = None #Point added position, used to keep the map view on place on reload
 
     try:
         img_id = request.POST["img_id"]
         #search for the image in the database and delete it
-        ImagePoint.objects.get(id=img_id).delete()
+        img = ImagePoint.objects.get(id=img_id)
+        mousepos = img.location
+        img.delete() #delete from database
         message = "Image removal successful"
     except Exception as e:
         print(f"Point remove failed because {e}")
@@ -119,7 +125,8 @@ def remove_image(request):
         "user": request.user,
         "images": ImagePoint.objects.all(),
         "message": message,
-        "form": ImagePointForm()
+        "form": ImagePointForm(),
+        "mousepos": mousepos
     }
 
     return render(request, "gisMap/index.html", context)
@@ -147,7 +154,7 @@ def download_image(request): #function that allows the download of an image
     mem_file = BytesIO() #memory where the zip file will be created
     with ZipFile(mem_file, 'w') as zipFolder: #create a zipped folder to return to the user
         zipFolder.writestr('image_data.geojson', geojson.dumps(file_to_download))
-        zipFolder.write(settings.BASE_DIR + img.image, 'image.jpeg')
+        zipFolder.write(settings.BASE_DIR + img.image.url, 'image.jpeg')
 
     mem_file.seek(0)
     response = HttpResponse(mem_file.read(), content_type="application/zip")

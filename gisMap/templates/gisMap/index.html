@@ -35,6 +35,11 @@
             window.addEventListener("map:init", e => {
                 const map = e.detail.map;
                 
+                //position the map view where the last point was added or removed
+                {% if mousepos is not None %}
+                    map.setView(["{{ mousepos.y }}", "{{ mousepos.x }}"]);
+                {% endif %}
+
                 //create a div to place the lat and lon values of the mouse
                 latlngDiv = document.createElement("div");
                 latlngDiv.setAttribute("class", "leaflet-control-scale");
@@ -74,7 +79,7 @@
                 //add the images in the database to the map in a cluster
                 markers = new L.markerClusterGroup();
                 let temp_marker;
-                {% for image in images%}
+                {% for image in images %}
                     //set temporary marker and append a popup to it with the information
                     temp_marker = L.marker(["{{ image.location.y }}", "{{ image.location.x }}"]);
                     //create the popup and bind it
