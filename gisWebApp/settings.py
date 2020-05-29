@@ -155,3 +155,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 
+if os.environ.get('ENV') == 'HEROKU':
+    GEOS_LIBRARY_PATH = '/app/.heroku/vendor/lib/libgeos_c.so'
+    GDAL_LIBRARY_PATH = '/app/.heroku/vendor/lib/libgdal.so'
