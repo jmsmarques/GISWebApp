@@ -21,6 +21,10 @@ if os.name == 'nt':
     os.environ['GDAL_DATA'] = OSGEO4W + r"\share\\gdal"
     os.environ['PROJ_LIB'] = OSGEO4W + r"\share\proj"
     os.environ['PATH'] = OSGEO4W + r"\bin;" + os.environ['PATH']
+else:
+    GDAL_LIBRARY_PATH = os.getenv('GDAL_LIBRARY_PATH')
+    GEOS_LIBRARY_PATH = os.getenv('GEOS_LIBRARY_PATH')
+
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -153,8 +157,4 @@ LEAFLET_CONFIG = {
 # Media Files (Images...)
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
-
-
-if os.environ.get('ENV') == 'HEROKU':
-    GEOS_LIBRARY_PATH = '/app/.heroku/vendor/lib/libgeos_c.so'
-    GDAL_LIBRARY_PATH = '/app/.heroku/vendor/lib/libgdal.so'
+    
