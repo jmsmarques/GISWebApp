@@ -2,8 +2,8 @@ from django.contrib.gis.db import models
 from django.contrib.auth.models import User
 
 class District(models.Model):
-    district_name = models.CharField(max_length=254, primary_key=True)
-    taa = models.CharField(max_length=254) #type of administrative area identificator
+    di = models.CharField(max_length=254, primary_key=True) #district unique identifier
+    district_name = models.CharField(max_length=254, unique=True) #district name
     area_ea_ha = models.FloatField() #total value of administrative area
     area_t_ha = models.FloatField() #total value of the district area
     geom = models.MultiPolygonField(srid=4326) #geometry representative of the boundaries of the district
@@ -11,10 +11,11 @@ class District(models.Model):
     def __str__(self):
         return str.title(self.district_name)
 
+
 class Municipality(models.Model):
-    municipality_name = models.CharField(max_length=254, primary_key=True)
-    district_name = models.ForeignKey('District', on_delete=models.CASCADE, to_field='district_name', related_name='municipality')
-    taa = models.CharField(max_length=254) #type of administrative area identificator
+    dico = models.CharField(max_length=254, primary_key=True) #Municipality unique identifier
+    municipality_name = models.CharField(max_length=254, unique=True) #name of the municipality
+    district_name = models.ForeignKey('District', on_delete=models.CASCADE, to_field='di', related_name='municipality') #district name where this municipality belongs
     area_ea_ha = models.FloatField() #total value of administrative area
     area_t_ha = models.FloatField() #total value of the municipality area
     geom = models.MultiPolygonField(srid=4326) #geometry representative of the boundaries of the municipality
@@ -23,13 +24,11 @@ class Municipality(models.Model):
         return str.title(self.municipality_name)
 
 class Parish(models.Model):
-    dicofre = models.CharField(max_length=254, primary_key=True) #Parish unique identificator
-    parish_name = models.CharField(max_length=254)
-    municipality_name = models.ForeignKey('Municipality', on_delete=models.CASCADE, to_field='municipality_name', related_name='parish')
-    taa = models.CharField(max_length=254) #type of administrative area identificator
+    dicofre = models.CharField(max_length=254, primary_key=True) #Parish unique identifier
+    parish_name = models.CharField(max_length=254) #name of the parish
+    municipality_name = models.ForeignKey('Municipality', on_delete=models.CASCADE, to_field='dico', related_name='parish') #municipality name where this district belongs
     area_ea_ha = models.FloatField() #total value of administrative area
     area_t_ha = models.FloatField() #total value of the parish area
-    des_simpli = models.CharField(max_length=254)
     geom = models.MultiPolygonField(srid=4326) #geometry representative of the boundaries of the parish
 
     def __str__(self):

@@ -1,0 +1,20 @@
+# This is an auto-generated Django model module created by ogrinspect.
+from django.contrib.gis.db import models
+
+
+class Portugal_Districts(models.Model):
+    di = models.CharField(max_length=254)
+    district = models.CharField(max_length=254)
+    area_ea_ha = models.FloatField()
+    area_t_ha = models.FloatField()
+    geom = models.MultiPolygonField(srid=4326)
+
+
+# Auto-generated `LayerMapping` dictionary for Portugal_Districts model
+portugal_districts_mapping = {
+    'di': 'Di',
+    'district': 'District',
+    'area_ea_ha': 'AREA_EA_Ha',
+    'area_t_ha': 'AREA_T_Ha',
+    'geom': 'MULTIPOLYGON',
+}
