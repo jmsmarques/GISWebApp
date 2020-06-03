@@ -21,7 +21,7 @@ class ParishInLine(LeafletGeoAdminMixin, admin.StackedInline):
     classes = ['collapse']
     fieldsets = (
         (None, {
-            'fields': ('parish_name',)
+            'fields': ('dicofre', 'parish_name',)
         }),
         ('Map area', {
             'classes': ('collapse',),
@@ -44,7 +44,7 @@ class MunicipalityComplete(LeafletGeoAdmin):
 
 
 class ParishComplete(LeafletGeoAdmin):
-    fields = ('dicofre', 'parish_name', 'municipality_name', 'district_name', 'taa', 'area_ea_ha', 'area_t_ha', 'des_simpli', 'geom')
+    fields = ('dicofre', 'parish_name', 'municipality_name', 'district_name', 'area_ea_ha', 'area_t_ha', 'geom')
     list_display = ['parish_name', 'municipality_name', 'district_name']
     readonly_fields = ('district_name',)
     search_fields = ('parish_name',)
