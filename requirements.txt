@@ -1,4 +1,5 @@
-Django==2.2.10
+asgiref==3.2.7
+Django==3.0.7
 django-leaflet==0.26.0
 geojson==2.5.0
 gunicorn==20.0.4
