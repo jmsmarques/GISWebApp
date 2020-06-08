@@ -37,8 +37,8 @@ class Parish(models.Model):
 class ImagePoint(models.Model):
     description = models.CharField(max_length=100) #description of the image
     image = models.ImageField(upload_to='images/') #image file
-    parish_name = models.ForeignKey('Parish', on_delete=models.CASCADE, default=None, related_name='images_point') #parish name where the image is located (this should be attributed automatically when adding an image)
-    author = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True, related_name='images_point') #image submiter username
+    parish_name = models.ForeignKey('Parish', on_delete=models.CASCADE, default=None, related_name='image_point') #parish name where the image is located (this should be attributed automatically when adding an image)
+    author = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True, related_name='image_point') #image submiter username
     location = models.PointField() #image location
 
     def __str__(self):

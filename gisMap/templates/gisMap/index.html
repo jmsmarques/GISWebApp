@@ -36,20 +36,37 @@
                 const map = e.detail.map;
                 //Controls to draw a polygon
                 drawnPolygn = new L.FeatureGroup();
-                map.addLayer(drawnPolygn)
+                map.addLayer(drawnPolygn);
                 drawControl = new L.Control.Draw({
                     //leave only polygon option in the control
                     draw: { 
-                        polyline: false,
                         marker: false,
                         circlemarker: false,
                         rectangle: false,
                         circle: false,
+                        polygon: { //set the properties of the polygon
+                            showArea: true,
+                            shapeOptions: {
+                                fill: false
+                            }
+                        },
+                        polyline: {
+                            allowIntersection: false
+                        },
                     },
                     edit: {
-                        featureGroup: drawnPolygn
+                        featureGroup: drawnPolygn,
+                        allowIntersection: false,
                     }
                 });
+                /* 
+                drawControl.setDrawingOptions({
+                    polygon: {
+                        
+                    }
+                });
+                */
+
                 map.addControl(drawControl);
 
                 //event to add the drawn polygon to the map
